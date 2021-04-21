@@ -1,0 +1,253 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ contest.description }}
+{% endblock title %}
+
+{% block body %}
+
+<script>
+$(document).ready(function() {
+    $("#signup").submit(function(e) {
+        // Reset error text
+        $("#password-confirm-input").removeClass("error");
+        $("#password-confirm-input span.help-block").text("");
+        $("#username-input").removeClass("error");
+        $("#username-input span.help-block").text("");
+
+        // Check that passwords are the same
+        if ($("#password").val() !== $("#password-confirm").val()) {
+            $("#password-confirm-input").addClass("error");
+            $("#password-confirm-input span.help-block").text("{% trans %}The passwords do not match!{% endtrans %}");
+            $("#password-confirm").focus();
+        } else {
+            var data = $(this).serialize();
+            var url = $(this).attr('action');
+
+            $("#submit-button-loading").show();
+
+            $.post(url, data).done(function(data) {
+                $("#signup-mask").hide();
+                $("#confirmed-mask").show();
+                $("#show-username").text(data);
+            }).fail(function(data) {
+                // Check if username is already used
+                if (data.status === 409) {
+                    $("#username-input").addClass("error");
+                    $("#username-input span.help-block").text("{% trans %}This username is already taken, please choose a different one.{% endtrans %}");
+                    $("#username").focus();
+                }
+            }).always(function() {
+                $("#submit-button-loading").hide();
+            });
+        }
+
+        e.preventDefault();
+    });
+});
+</script>
+
+<div class="login_container" style="position:absolute;">
+    <div class="login_box hero-unit" style="margin-top: -300px;">
+
+        <div id="signup-mask">
+            <h1>{% trans %}New user{% endtrans %}</h1>
+            <p>{% trans %}Please fill in the fields to register{% endtrans %}</p>
+            <form id="signup" class="form-horizontal" action="{{ contest_url('register') }}">
+                {{ xsrf_form_html|safe }}
+                {% set next_page = handler.get_argument("next", none) %}
+                {% if next_page is not none %}
+                <input type="hidden" name="next" value="{{ next_page }}">
+                {% endif %}
+                <fieldset>
+                    <div class="control-group">
+                        <label class="control-label" for="first_name">{% trans %}First name{% endtrans %}</label>
+                        <div class="controls">
+                            <input required minlength="1" maxlength="{{ MAX_INPUT_LENGTH }}" type="text" class="input-xlarge" name="first_name" id="first_name">
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="last_name">{% trans %}Last name{% endtrans %}</label>
+                        <div class="controls">
+                            <input required minlength="1" maxlength="{{ MAX_INPUT_LENGTH }}" type="text" class="input-xlarge" name="last_name" id="last_name">
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="grade">{% trans %}Grade{% endtrans %}</label>
+                        <div class="controls">
+                            <select name="grade" id="grade">
+                              <option value="5">5</option>
+                              <option value="6">6</option>
+                              <option value="7">7</option>
+                              <option value="8">8</option>
+                              <option value="9">9</option>
+                              <option value="10">10</option>
+                              <option value="11">11</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="school_name">{% trans %}City/Region{% endtrans %}</label>
+                        <div class="controls">
+                            <select name="city_region" id="city_region">
+                                <option value="">Seçin</option>
+                                <option value="140">Abşeron</option>
+                                <option value="60">Ağcabədi</option>
+                                <option value="61">Ağdam/Bakı</option>
+                                <option value="203">Ağdam/Mingəçevir</option>
+                                <option value="62">Ağdaş</option>
+                                <option value="63">Ağdərə</option>
+                                <option value="64">Ağstafa</option>
+                                <option value="65">Ağsu</option>
+                                <option value="66">Astara</option>
+                                <option value="67">Bakı</option>
+                                <option value="68">Balakən</option>
+                                <option value="69">Beyləqan</option>
+                                <option value="70">Bərdə</option>
+                                <option value="71">Biləsuvar</option>
+                                <option value="72">Cəbrayıl/Bakı</option>
+                                <option value="204">Cəbrayıl/Şirvan</option>
+                                <option value="73">Cəlilabad</option>
+                                <option value="75">Daşkəsən</option>
+                                <option value="77">Füzuli/Bakı</option>
+                                <option value="202">Füzuli/Şirvan</option>
+                                <option value="78">Gədəbəy</option>
+                                <option value="79">Gəncə</option>
+                                <option value="80">Goranboy</option>
+                                <option value="81">Göyçay</option>
+                                <option value="82">Göygöl</option>
+                                <option value="136">Hacıqabul</option>
+                                <option value="85">İmişli</option>
+                                <option value="86">İsmayıllı</option>
+                                <option value="87">Kəlbəcər/Bakı</option>
+                                <option value="201">Kəlbəcər/Gəncə</option>
+                                <option value="88">Kürdəmir</option>
+                                <option value="89">Laçın</option>
+                                <option value="90">Lerik</option>
+                                <option value="91">Lənkəran</option>
+                                <option value="93">Masallı</option>
+                                <option value="94">Mingəçevir</option>
+                                <option value="95">Naftalan</option>
+                                <option value="97">Neftçala</option>
+                                <option value="98">Oğuz</option>
+                                <option value="100">Qax</option>
+                                <option value="101">Qazax</option>
+                                <option value="102">Qəbələ</option>
+                                <option value="103">Qobustan</option>
+                                <option value="104">Quba</option>
+                                <option value="105">Qubadlı</option>
+                                <option value="106">Qusar</option>
+                                <option value="107">Saatlı</option>
+                                <option value="108">Sabirabad</option>
+                                <option value="109">Şabran</option>
+                                <option value="111">Salyan</option>
+                                <option value="112">Şamaxı</option>
+                                <option value="113">Samux</option>
+                                <option value="114">Şəki</option>
+                                <option value="115">Şəmkir</option>
+                                <option value="117">Şirvan</option>
+                                <option value="118">Siyəzən</option>
+                                <option value="119">Sumqayıt</option>
+                                <option value="120">Şuşa</option>
+                                <option value="121">Tərtər</option>
+                                <option value="122">Tovuz</option>
+                                <option value="123">Ucar</option>
+                                <option value="124">Xaçmaz</option>
+                                <option value="127">Xızı</option>
+                                <option value="205">Xocalı/Bakı</option>
+                                <option value="206">Xocalı/Gəncə</option>
+                                <option value="207">Xocavənd/Sumqayıt</option>
+                                <option value="208">Xocavənd/Şirvan</option>
+                                <option value="130">Xudat</option>
+                                <option value="131">Yardımlı</option>
+                                <option value="132">Yevlax</option>
+                                <option value="133">Zaqatala</option>
+                                <option value="134">Zəngilan</option>
+                                <option value="135">Zərdab</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="school_name">{% trans %}School Name{% endtrans %}</label>
+                        <div class="controls">
+			    <input type="text" class="input-xlarge" name="school_name" id="school_name" autocomplete="Məktəb">
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="email">{% trans %}E-mail{% endtrans %}</label>
+                        <div class="controls">
+                            <input minlength="0" maxlength="{{ MAX_INPUT_LENGTH }}" type="text" class="input-xlarge" name="email" id="email" autocomplete="email">
+                        </div>
+                    </div>
+
+                    {% if teams|length > 0 %}
+                    <div class="control-group">
+                        <label class="control-label" for="team">{% trans %}Representing{% endtrans %}</label>
+                        <div class="controls">
+                            <select id="team" name="team">
+                            {% for t in teams %}
+                                <option value="{{ t.code }}">{{ t.name }}</option>
+                            {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <hr>
+
+                    <div id="username-input" class="control-group">
+                        <label class="control-label" for="username">{% trans %}Username{% endtrans %}</label>
+                        <div class="controls">
+                            <input required minlength="1" maxlength="{{ MAX_INPUT_LENGTH }}" pattern="^[A-Za-z0-9_-]+$" type="text" class="input-xlarge" name="username" id="username">
+                            <span class="help-block"></span>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="password">{% trans %}Password{% endtrans %}</label>
+                        <div class="controls">
+                            <input required minlength="{{ MIN_PASSWORD_LENGTH }}" maxlength="{{ MAX_INPUT_LENGTH }}" type="password" class="input-xlarge" name="password" id="password" autocomplete="new-password">
+                            <span class="help-block">
+                                {% trans min_length=MIN_PASSWORD_LENGTH %}
+                                Must be one character or more.
+                                {% pluralize %}
+                                Must be {{ min_length }} characters or more.
+                                {% endtrans %}
+                            </span>
+                        </div>
+                    </div>
+                    <div id="password-confirm-input" class="control-group">
+                        <label class="control-label" for="password-confirm">{% trans %}Confirm password{% endtrans %}</label>
+                        <div class="controls">
+                            <input required minlength="{{ MIN_PASSWORD_LENGTH }}" maxlength="{{ MAX_INPUT_LENGTH }}" type="password" class="input-xlarge" name="password-confirm" id="password-confirm" autocomplete="new-password">
+                            <span class="help-block"></span>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="controls">
+                            <button type="submit" class="btn btn-primary btn-large">{% trans %}Register{% endtrans %}</button>
+                            <img id="submit-button-loading" style="display: none;" src="{{ url('static', 'loading.gif') }}" alt="loading..." />
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+
+        <div id="confirmed-mask" style="display: none;">
+            <h1>{% trans %}New user{% endtrans %}</h1>
+
+            <p>{% trans %}The user was created successfully!{% endtrans %}</p>
+
+            <p>{% trans %}Your username is:{% endtrans %}</p>
+
+            <p id="show-username" style="font-size: xx-large; font-family: monospace; font-weight: bold; text-align: center;">
+            </p>
+
+            <p>{% trans %}The password you chose was stored securely.{% endtrans %}</p>
+
+            <a href="{{ contest_url() }}" class="btn btn-success btn-large">{% trans %}Back to login{% endtrans %}</a>
+        </div>
+
+    </div>
+</div>
+
+{% endblock body %}
