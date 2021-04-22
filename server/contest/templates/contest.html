@@ -50,6 +50,10 @@ $(document).ready(function () {
         <div id="navigation_bar" class="navbar navbar-fixed-top">
             <div class="navbar-inner">
                 <div class="container">
+                    <form action="{{ contest_url("endcontest") }}" method="POST" class="navbar-form pull-right">
+                        {{ xsrf_form_html|safe }}
+                        <button type="submit" class="btn btn-warning">{% trans %}End Contest{% endtrans %}</button>
+                    </form>
                     <a class="brand" href="{{ contest_url() }}">{{ contest.description }}</a>
 {% if available_translations|length > 1 %}
                     <p class="navbar-text pull-right">
